@@ -2,6 +2,7 @@ package com.server.mock.controller;
 
 import com.server.mock.Service.QuestionService;
 import com.server.mock.Service.QuizService;
+import com.server.mock.Service.impl.QuestionServiceImpl;
 import com.server.mock.model.exam.Question;
 import com.server.mock.model.exam.Quiz;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/question")
@@ -21,7 +19,7 @@ import java.util.List;
 public class QuestionController {
 
     @Autowired
-    private QuestionService questionService;
+    private QuestionServiceImpl questionService;
 
     @Autowired
     private QuizService quizService;

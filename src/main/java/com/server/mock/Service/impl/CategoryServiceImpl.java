@@ -38,7 +38,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Cacheable(value = "AllCategories")
+    @Cacheable( value = "AllCategories")
     public Set<Category> getAllCategory() {
         return new LinkedHashSet<>( this.categoryRepository.findAll() );
     }

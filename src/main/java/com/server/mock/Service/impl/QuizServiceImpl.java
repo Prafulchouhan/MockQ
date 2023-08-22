@@ -30,7 +30,13 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Set<Quiz> getAllQuiz() {
-        return new LinkedHashSet<>( this.QuizRepository.findAll());
+        Set<Quiz> quiz= this.QuizRepository.findAll()
+                .stream()
+                .map(e->{
+                    e.setNoOfQuestions(String.valueOf(e.getQuestions().size()));
+                    return e;
+                }).collect(Collectors.toSet());
+        return new LinkedHashSet<>(quiz);
     }
 
     @Override

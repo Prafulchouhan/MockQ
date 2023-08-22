@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -45,11 +46,4 @@ public class AuthenticationController {
             return ResponseEntity.ok(response);
         }
     }
-
-
-    @GetMapping("/current_user")
-    public User getUser(@Valid Principal principal){
-        return this.userService.getName(principal.getName()).get();
-    }
-    
 }

@@ -5,11 +5,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    public static final String[] PUBLIC_URLS={
+            "/api/v1/auth/login","/api/v1/auth/register","/swagger-ui/**","/v3/api-docs",
+            "/v2/api-docs","/swagger-resources/**","/webjar/**"
+    };
     @Autowired
     private JWTRequestFilter jwtRequestFilter;
 
@@ -26,13 +34,11 @@ public class SecurityConfig {
         http.headers().frameOptions().disable().and().cors().and().csrf().disable();
         http.addFilterBefore(jwtRequestFilter, AuthorizationFilter.class);
         http.authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/login","/api/v1/auth/register","/swagger-ui/*")
+                .requestMatchers(PUBLIC_URLS)
                 .permitAll()
-                .requestMatchers(HttpMethod.GET)
-                .authenticated()
                 .anyRequest()
                 .authenticated();
-        return http.build();
+    return http.build();
     }
 
 }

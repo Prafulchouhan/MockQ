@@ -4,6 +4,7 @@ import com.server.mock.Service.QuestionService;
 import com.server.mock.model.exam.Question;
 import com.server.mock.model.exam.Quiz;
 import com.server.mock.repository.QuestionRepository;
+import com.server.mock.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,20 +15,30 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@CacheConfig(cacheNames = {"question","questions"})
+@CacheConfig(cacheNames = {"question","allQuestion"})
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private QuizRepository quizRepository;
     @Override
-    @CachePut(key = "#id",value = "question")
+    @CachePut(key = "#question.id",value = "question")
     public Question createQuestion(Question question) {
+        updateQuizQuestionsInCaching(quizRepository.findById(question.getQuiz().getId()).get());
         return this.questionRepository.save(question);
     }
 
+    @CachePut(key = "#quiz.id",value = "allQuestion")
+    public Set<Question> updateQuizQuestionsInCaching(Quiz quiz) {
+        return this.questionRepository.findByQuiz(quiz);
+    }
+
+
     @Override
-    @CachePut(key = "#id",value = "question")
+    @CachePut(key = "#question.id",value = "question")
     public Question updateQuestion(Question question) {
         return this.questionRepository.save(question);
     }
@@ -51,7 +62,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    @Cacheable(key = "#id",value = "question")
+    @Cacheable(key = "#quiz.id",value = "allQuestion")
     public Set<Question> findByQuid(Quiz quiz) {
         return this.questionRepository.findByQuiz(quiz);
     }

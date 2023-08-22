@@ -1,14 +1,15 @@
 package com.server.mock.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.server.mock.model.exam.QuizAttempt;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,4 +49,9 @@ public class User {
     private String password;
 
     private String role;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private List<QuizAttempt> quizAttempts = new ArrayList<>();
 }

@@ -28,6 +28,4 @@ public class Category implements Serializable {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Quiz> quizzes = new LinkedHashSet<>();
-
-
 }
