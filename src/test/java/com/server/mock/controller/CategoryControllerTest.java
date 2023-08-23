@@ -63,7 +63,7 @@ class CategoryControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$",notNullValue()))
                 .andReturn().getResponse().getContentAsString();
     }

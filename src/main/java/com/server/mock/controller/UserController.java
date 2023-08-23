@@ -40,7 +40,7 @@ public class UserController {
 
     @GetMapping("/current_user")
     public User getUser(@Valid Principal principal){
-        return this.userService.getName(principal.getName()).get();
+        return this.userService.getName(principal.getName());
     }
 
 

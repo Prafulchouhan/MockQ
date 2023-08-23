@@ -50,8 +50,8 @@ public class UserServiceImpl {
         return null;
     }
 
-    public Optional<User> getName(String name){
-        return userRepository.findByUserNameIgnoreCase(name);
+    public User getName(String name){
+        return userRepository.findByUserNameIgnoreCase(name).get();
     }
 
     public User updateUser(User user){

@@ -5,8 +5,8 @@ import com.server.mock.model.exam.Question;
 import com.server.mock.model.exam.Quiz;
 import com.server.mock.repository.QuestionRepository;
 import com.server.mock.repository.QuizRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,15 +15,15 @@ import org.springframework.stereotype.Service;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@CacheConfig(cacheNames = {"question","allQuestion"})
+//@CacheConfig(cacheNames = {"question","allQuestion"})
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
-
     @Autowired
     private QuizRepository quizRepository;
+
     @Override
     @CachePut(key = "#question.id",value = "question")
     public Question createQuestion(Question question) {

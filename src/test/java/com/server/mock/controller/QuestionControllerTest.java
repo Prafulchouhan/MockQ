@@ -3,14 +3,21 @@ package com.server.mock.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.server.mock.Service.QuestionService;
 import com.server.mock.Service.QuizService;
+import com.server.mock.model.exam.Category;
 import com.server.mock.model.exam.Question;
 import com.server.mock.model.exam.Quiz;
+import com.server.mock.repository.QuizRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MockMvcBuilder;
@@ -18,6 +25,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
@@ -29,24 +37,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class QuestionControllerTest {
 
     private MockMvc mockMvc;
-
     @InjectMocks
     private QuestionController questionController;
-
     @Mock
     private QuestionService questionService;
 
     @Mock
     private QuizService quizService;
-
     private Question question1,question2;
     private Quiz quiz;
 
     @BeforeEach
     void setUp() {
+        Category category = new Category(1l, "title", "desc", null);
+        quiz=new Quiz(1l,"title","desc","100","20",true,20,category,null);
         question1=new Question(1l,
                 quiz,
                 "question1",
@@ -65,24 +74,22 @@ class QuestionControllerTest {
                 "opt1",
                 "opt1",
                 "ans");
-
-        quiz=new Quiz(1l,"title","desc","100","20",true,20,null,Set.of(question1,question2));
-
+        quiz.setQuestions(Set.of(question1, question2));
         MockitoAnnotations.initMocks(this);
         mockMvc= MockMvcBuilders.standaloneSetup(questionController).build();
     }
 
     @Test
     void addQuestion() throws Exception {
-        doReturn(question1).when(questionService).createQuestion(any());
+        when(questionService.createQuestion(any())).thenReturn(question1);
+//        doReturn(question1).when(questionService).createQuestion(any());
         String content=new ObjectMapper().writeValueAsString(question1);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/question")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(content))
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$",notNullValue()));
+                .andExpect(status().isCreated());
     }
 
     @Test

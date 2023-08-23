@@ -4,6 +4,7 @@ import com.server.mock.Service.QuestionService;
 import com.server.mock.model.exam.Question;
 import com.server.mock.model.exam.Quiz;
 import com.server.mock.repository.QuestionRepository;
+import com.server.mock.repository.QuizRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -28,6 +30,9 @@ class QuestionServiceImplTest {
 
     @Mock
     private QuestionRepository questionRepository;
+
+    @Mock
+    private QuizRepository quizRepository;
 
     private Question question1,question2;
     private Quiz quiz;
@@ -57,6 +62,7 @@ class QuestionServiceImplTest {
 
     @Test
     void createQuestion() {
+        Mockito.when(quizRepository.findById(any())).thenReturn(Optional.of(quiz));
         Mockito.when(questionRepository.save(question1)).thenReturn(question1);
         assertThat(questionService.createQuestion(question1).getId()).isEqualTo(1l);
     }

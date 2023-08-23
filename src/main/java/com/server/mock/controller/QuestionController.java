@@ -5,6 +5,7 @@ import com.server.mock.Service.QuizService;
 import com.server.mock.Service.impl.QuestionServiceImpl;
 import com.server.mock.model.exam.Question;
 import com.server.mock.model.exam.Quiz;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ import java.util.*;
 public class QuestionController {
 
     @Autowired
-    private QuestionServiceImpl questionService;
+    private QuestionService questionService;
 
     @Autowired
     private QuizService quizService;

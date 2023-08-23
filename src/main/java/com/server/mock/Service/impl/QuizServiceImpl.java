@@ -30,7 +30,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public Set<Quiz> getAllQuiz() {
-        Set<Quiz> quiz= this.QuizRepository.findAll()
+        Set<Quiz> quiz = this.QuizRepository.findAll()
                 .stream()
                 .map(e->{
                     e.setNoOfQuestions(String.valueOf(e.getQuestions().size()));
