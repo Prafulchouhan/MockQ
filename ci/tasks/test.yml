@@ -9,7 +9,7 @@ image_resource:
   type: registry-image
   source:
     repository: maven
-    tag: 3.6.3
+    tag: 4.0.0
 
 # Cache the Maven repository directory
 caches:
