@@ -28,7 +28,7 @@ run:
   args:
     - -c
     - |
-      mvn -f git/pom.xml test
+      mvn -f git/pom.xml clean install
       
       # Make this output available to the 'test' Job
       cp -R git/* build
