@@ -27,16 +27,16 @@ jobs:
       - task: run-unit-tests
         file: git/ci/tasks/test.yml
 
-  # This build job will fetch the source code,
-  # then execute a 'build' task which is defined separately in the repository.
-#  - name: package
-#    plan:
-#      - get: git # Concourse is stateless and needs to be given an external input to this Job.
-#        passed:
-#          - unit # The 'unit' job must have passed for this job to execute
-#        trigger: true
-#      - task: maven-package
-#        file: git/ci-cd/tasks/maven-package.yml
-#      # Take the image built in the previous task, and push it to our Docker registry Resource
-#      - put: image
-#        params: {image: image/hello-java.tar}
+#   This build job will fetch the source code,
+#   then execute a 'build' task which is defined separately in the repository.
+  - name: package
+    plan:
+      - get: git # Concourse is stateless and needs to be given an external input to this Job.
+        passed:
+          - unit # The 'unit' job must have passed for this job to execute
+        trigger: true
+      - task: maven-package
+        file: git/ci-cd/tasks/maven-package.yml
+      # Take the image built in the previous task, and push it to our Docker registry Resource
+      - put: image
+        params: {image: image/mockq.tar}
