@@ -33,3 +33,9 @@ run:
 
       # Save the image as a tar file
       docker save -o image/mockq.tar prafulchouhan/mockq-concorse:latest
+      
+      cd image
+      
+      ls
+      
+      
