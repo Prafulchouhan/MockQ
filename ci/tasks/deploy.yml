@@ -23,7 +23,6 @@ run:
     - -c
     - |
       # Navigate to the directory containing your Dockerfile and Spring Boot application
-      cd git
 
       # Build the Docker image using the Docker CLI
       docker build -t prafulchouhan/mockq-concorse:latest .
@@ -37,5 +36,5 @@ run:
       cd image
       
       ls
-      
-      
+
+
