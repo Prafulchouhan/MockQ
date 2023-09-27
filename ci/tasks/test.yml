@@ -32,7 +32,3 @@ run:
       
       # Make this output available to the 'test' Job
       cp -R git/* build
-
-      cd git 
-      ls
-      

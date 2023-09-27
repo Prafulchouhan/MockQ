@@ -1,5 +1,4 @@
 ---
-# Declare the resources that Concourse will continually check and use.
 resources:
   - name: git
     icon: github
@@ -17,26 +16,97 @@ resources:
       tag: latest
 
 jobs:
-
-  # This test job will fetch the source code from GitHub, and execute the test task.
   - name: unit
     plan:
       - get: git
-#        version: latest # Just process the latest Git commit, not every commit (this is the default setting)
-        trigger: true # Trigger this job whenever Concourse detects a new Resource version (i.e. a new Git commit)
-      - task: run-unit-tests
-        file: git/ci/tasks/test.yml
-
-#   This build job will fetch the source code,
-#   then execute a 'build' task which is defined separately in the repository.
-  - name: package
-    plan:
-      - get: git # Concourse is stateless and needs to be given an external input to this Job.
-        passed:
-          - unit # The 'unit' job must have passed for this job to execute
         trigger: true
-      - task: maven-package
-        file: git/ci/tasks/deploy.yml
-      # Take the image built in the previous task, and push it to our Docker registry Resource
+      - task: run-unit-tests
+#        file: git/ci/tasks/test.yml
+#        outputs:
+#          - name: build
+        config:
+          platform: linux
+          container_limits: { }
+
+          # Use the 'maven:4.0.0' image from Docker Hub
+          image_resource:
+            type: registry-image
+            source:
+              repository: maven
+              tag: 3.8.4
+
+          # Cache the Maven repository directory
+          caches:
+            - path: $HOME/.m2/repository
+
+          # We will provide an input called 'src' to this Task
+          inputs:
+            - name: git
+          outputs:
+            - name: build
+
+          # What do we want this task to do?
+          # Tell Concourse the commands it should execute, in this Task
+          run:
+            path: /bin/sh
+            args:
+              - -c
+              - |
+                mvn -f git/pom.xml clean install
+
+                # Make this output available to the 'test' Job
+                cp -R git/* build
+
+
+  - name: mvn-build
+    plan:
+      - get: git
+        passed:
+          - unit
+        trigger: true
+      - task: test
+        config:
+          platform: linux
+          container_limits: { }
+          image_resource:
+            type: registry-image
+            source:
+              repository: maven
+              tag: 3.8.4
+          caches:
+            - path: $HOME/.m2/repository
+          inputs:
+            - name: git
+          outputs:
+            - name: package
+          run:
+            path: /bin/sh
+            args:
+              - -c
+              - |
+                mvn -f git/pom.xml clean install
+                
+                # Make this output available to the 'test' Job
+                cp -R git/* package
+                
+                
+
+      - task: build-task-image
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: concourse/oci-build-task
+          inputs:
+            - name: package
+          outputs:
+            - name: image
+          params:
+            CONTEXT: package
+          run:
+            path: build
       - put: image
-        params: {image: image/mockq.tar}
+        params:
+          image: image/image.tar
