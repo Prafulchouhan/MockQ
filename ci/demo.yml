@@ -1,0 +1,31 @@
+resources:
+  - name: my-repo
+    type: git
+    source:
+      uri: https://github.com/Prafulchouhan/test-script.git
+      branch: main
+
+
+
+jobs:
+  - name: build-and-push
+    plan:
+      - get: my-repo
+        trigger: true
+      - task: build-task-image
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: concourse/oci-build-task
+          inputs:
+            - name: my-repo
+          outputs:
+            - name: image
+          params:
+            CONTEXT: my-repo
+          run:
+            path: build
+
